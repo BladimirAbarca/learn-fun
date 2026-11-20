@@ -70,15 +70,17 @@ export default function Hub() {
   }, [locked]);
 
   useEffect(() => {
-    if (!entering) return;
+    const door = entering;
+    if (!door) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) {
-      if (entering.open && entering.href) router.push(entering.href);
-      else setLocked(entering);
+      if (door.open && door.href) router.push(door.href);
+      else setLocked(door);
       setEntering(null);
       return;
     }
-    const opens = Boolean(entering.open && entering.href);
+    const doorOpen = door.open;
+    const opens = Boolean(doorOpen && door.href);
     setPhase(opens ? "shut" : "blocked");
     const start = window.requestAnimationFrame(() => {
       if (opens) window.requestAnimationFrame(() => setPhase("swing"));
@@ -87,14 +89,14 @@ export default function Hub() {
       if (opens) setPhase("through");
     }, 720);
     const doneTimer = window.setTimeout(() => {
-      if (opens && entering.href) router.push(entering.href);
+      if (opens && door.href) router.push(door.href);
       else {
-        setLocked(entering);
+        setLocked(door);
         setEntering(null);
       }
     }, opens ? 1450 : 700);
     function onKey(event: KeyboardEvent) {
-      if (event.key === "Escape" && !entering.open) {
+      if (event.key === "Escape" && !doorOpen) {
         setEntering(null);
       }
     }
