@@ -1,0 +1,11 @@
+node_modules
+.cache
+.next
+out
+.env
+.env.local
+.env*.local
+agent-tools
+*.log
+.DS_Store
+tsconfig.tsbuildinfo
