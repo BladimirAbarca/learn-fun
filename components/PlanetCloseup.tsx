@@ -502,7 +502,14 @@ function World({
   return (
     <group rotation={[0, 0, (view.tilt * Math.PI) / 180]}>
       <group ref={spin}>
-        <ModelBoundary resetKey={view.modelKey ?? "craft"} fallback={view.kind === "rock" ? <RockLump color={view.color} /> : <FallbackSphere color={view.color} radius={1} />}>
+        <ModelBoundary
+          resetKey={view.modelKey ?? "craft"}
+          fallback={
+            <GiveUp onReady={onReady}>
+              {view.kind === "rock" ? <RockLump color={view.color} /> : <FallbackSphere color={view.color} radius={1} />}
+            </GiveUp>
+          }
+        >
           <Suspense fallback={<FallbackSphere color={view.color} radius={1} />}>
             {view.modelKey ? (
               <NasaBody modelKey={view.modelKey} radius={1} sun={view.sun} onReady={onReady} />
@@ -537,6 +544,13 @@ function World({
       ))}
     </group>
   );
+}
+
+function GiveUp({ onReady, children }: { onReady: () => void; children: ReactNode }) {
+  useEffect(() => {
+    onReady();
+  }, [onReady]);
+  return children;
 }
 
 function NasaBody({
